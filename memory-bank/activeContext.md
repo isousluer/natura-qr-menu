@@ -1,26 +1,27 @@
 # Active Context
 
 ## Mevcut Durum
-Temel geliştirme tamamlandı. Arayüz çalışıyor, Supabase bağlantısı henüz yapılmadı. Şu an mock data ile test ediliyor.
+Proje çalışır durumda. Supabase bağlantısı kuruldu, admin panelden kategori ve yemek eklenebiliyor, public menü sayfası gerçek verilerle çalışıyor.
 
 ## Odak Noktası
-Supabase kurulumu ve gerçek veri bağlantısı.
+Vercel deploy.
 
 ## Sonraki Adımlar
-1. Supabase projesi oluştur
-2. supabase-schema.sql çalıştır
-3. Storage bucket oluştur (menu-images)
-4. .env.local dosyasını doldur
-5. page.tsx'teki mock datayı gerçek Supabase sorgusuyla değiştir
-6. Vercel'e deploy
+1. Vercel'e deploy
+2. Vercel Dashboard'a env değişkenlerini ekle
+3. İsteğe bağlı: Supabase Transform ile görsel optimizasyonu
 
 ## Kesinleşen Kararlar
-- Next.js 16 + Turbopack kullanılıyor (`next dev --turbo`)
-- Kategori görselleri: arka plan olarak karartılmış tam genişlik görsel
-- Yemekler: 2 sütunlu grid, kare görsel + isim + açıklama + fiyat
-- Kategoriler sayfa açılışında kapalı gelir
-- Görsel render: `next/image` yerine düz `<img>` tag kullanılıyor (fill+aspect-square çakışması nedeniyle)
+- Next.js 16 + Turbopack (`next dev --turbo`)
+- Kategori görselleri: arka planda karartılmış tam genişlik, üstünde beyaz yazı (text-3xl)
+- Yemekler: mobilde 2 sütun, md ve üstünde 3 sütun grid
+- Kategoriler sayfa açılışında kapalı
+- Görsele tıklayınca lightbox açılıyor, dışarı tıklayınca kapanıyor
+- Görsel render: düz img tag (next/image fill kullanılmıyor)
+- Admin panelde ürün satırında 40x40 küçük görsel gösterimi
 
 ## Önemli Notlar
-- `next/image` fill prop'u ile aspect-square CSS birlikte kullanılmamalı, sonsuz döngüye giriyor
-- Admin panelinde hem kategori hem yemek için görsel yükleme mevcut
+- next/image fill + aspect-square birlikte kullanılmamalı
+- Görsel yükleme async — "Görsel yüklendi ✓" yazısını bekle
+- Supabase RLS: SELECT herkese açık, yazma işlemleri API üzerinden
+- Storage politikaları SQL Editor'dan eklendi

@@ -13,7 +13,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const body = await req.json()
   const { data, error } = await supabase
     .from('categories')
-    .update({ name: body.name, sort_order: body.sort_order, is_active: body.is_active })
+    .update({ name: body.name, image_url: body.image_url ?? null, sort_order: body.sort_order, is_active: body.is_active })
     .eq('id', id)
     .select()
     .single()

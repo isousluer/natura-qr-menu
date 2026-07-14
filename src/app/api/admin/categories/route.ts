@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json()
   const { data, error } = await supabase
     .from('categories')
-    .insert({ name: body.name, sort_order: body.sort_order ?? 0, is_active: true })
+    .insert({ name: body.name, image_url: body.image_url ?? null, sort_order: body.sort_order ?? 0, is_active: true })
     .select()
     .single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

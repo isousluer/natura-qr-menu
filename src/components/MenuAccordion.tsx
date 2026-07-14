@@ -1,11 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import type { CategoryWithItems } from '@/lib/types'
 
 export default function MenuAccordion({ categories }: { categories: CategoryWithItems[] }) {
-  const [openId, setOpenId] = useState<string | null>(categories[0]?.id ?? null)
+  const [openId, setOpenId] = useState<string | null>(null)
 
   if (categories.length === 0) {
     return <p className="text-center text-gray-500">Menü henüz hazırlanmadı.</p>
@@ -21,12 +20,11 @@ export default function MenuAccordion({ categories }: { categories: CategoryWith
             className="relative w-full h-24 flex items-center justify-between px-5 text-left overflow-hidden"
           >
             {cat.image_url ? (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 src={cat.image_url}
                 alt={cat.name}
-                fill
-                className="object-cover brightness-50"
-                sizes="(max-width: 672px) 100vw, 672px"
+                className="absolute inset-0 w-full h-full object-cover brightness-50"
               />
             ) : (
               <div className="absolute inset-0 bg-gray-700" />
@@ -43,17 +41,16 @@ export default function MenuAccordion({ categories }: { categories: CategoryWith
                 .sort((a, b) => a.sort_order - b.sort_order)
                 .map((item) => (
                   <div key={item.id} className="rounded-xl overflow-hidden border border-gray-100 flex flex-col">
-                    <div className="relative w-full aspect-square">
+                    <div className="w-full aspect-square overflow-hidden bg-gray-100">
                       {item.image_url ? (
-                        <Image
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
                           src={item.image_url}
                           alt={item.name}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 672px) 50vw, 336px"
+                          className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gray-100 flex items-center justify-center text-4xl">
+                        <div className="w-full h-full flex items-center justify-center text-4xl">
                           🍽️
                         </div>
                       )}

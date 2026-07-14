@@ -6,35 +6,47 @@
 ## Veri Modeli
 
 ### Category
-- id
-- name (kategori adı)
-- order (sıralama)
+- id (uuid)
+- name
+- image_url (kategori arka plan görseli)
+- sort_order
 - is_active
 
 ### MenuItem
-- id
-- category_id (FK)
-- name (yemek adı)
-- description (içerik/açıklama)
+- id (uuid)
+- category_id (FK → categories)
+- name
+- description
 - price
 - image_url
-- order (sıralama)
+- sort_order
 - is_active
 
 ## UI Patterns
 
 ### Public Menü
-- Accordion bileşeni: kategori başlığına tıklanınca yemekler açılır/kapanır
-- Yemek kartı: görsel + isim + içerik + fiyat
-- Mobile-first responsive layout
+- Accordion: kategori başlığına tıklanınca yemekler açılır/kapanır
+- Kategoriler sayfa açılışında kapalı gelir
+- Kategori başlığı: tam genişlik, arka planda karartılmış görsel, üstünde beyaz yazı
+- Yemekler: 2 sütunlu grid, kare görsel (img tag) + isim + açıklama + fiyat
+- Görsel yoksa 🍽️ placeholder gösterilir
 
 ### Admin Panel
-- CRUD arayüzü kategoriler için
-- Her kategorinin altında yemek CRUD
-- Görsel yükleme formu (file input)
+- Cookie tabanlı auth (httpOnly, 7 gün)
+- Middleware ile /admin/* rotaları korunuyor
+- Kategori CRUD + görsel yükleme
+- Yemek CRUD + görsel yükleme
+- Accordion yapısında: kategori açılınca altındaki yemekler ve form görünür
 
-## API Yapısı (Taslak)
-- GET /api/menu → tüm kategoriler ve yemekler (public)
-- CRUD /api/admin/categories
-- CRUD /api/admin/menu-items
-- POST /api/admin/upload → görsel yükleme
+## API Yapısı
+- GET  /api/admin/categories         → tüm kategoriler
+- POST /api/admin/categories         → kategori ekle
+- PUT  /api/admin/categories/[id]    → kategori güncelle
+- DEL  /api/admin/categories/[id]    → kategori sil
+- GET  /api/admin/menu-items         → yemekler (category_id filtresi ile)
+- POST /api/admin/menu-items         → yemek ekle
+- PUT  /api/admin/menu-items/[id]    → yemek güncelle
+- DEL  /api/admin/menu-items/[id]    → yemek sil
+- POST /api/admin/upload             → Supabase Storage'a görsel yükle
+- POST /api/admin/login              → cookie set
+- POST /api/admin/logout             → cookie sil

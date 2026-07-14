@@ -1,21 +1,26 @@
 # Active Context
 
 ## Mevcut Durum
-Proje başlangıç aşamasında. Memory bank oluşturuldu, geliştirme henüz başlamadı.
+Temel geliştirme tamamlandı. Arayüz çalışıyor, Supabase bağlantısı henüz yapılmadı. Şu an mock data ile test ediliyor.
 
 ## Odak Noktası
-Teknoloji seçimi ve proje iskeletinin kurulması.
+Supabase kurulumu ve gerçek veri bağlantısı.
 
 ## Sonraki Adımlar
-1. Tech stack kararı (framework, backend, veritabanı)
-2. Proje yapısının oluşturulması
-3. Veritabanı şemasının tasarlanması
-4. Admin panel geliştirme
-5. Public menü sayfası geliştirme
+1. Supabase projesi oluştur
+2. supabase-schema.sql çalıştır
+3. Storage bucket oluştur (menu-images)
+4. .env.local dosyasını doldur
+5. page.tsx'teki mock datayı gerçek Supabase sorgusuyla değiştir
+6. Vercel'e deploy
 
-## Açık Kararlar
-- Frontend framework seçimi (Next.js / React / vanilla)
-- Backend yaklaşımı (Node.js, PHP, vb.)
-- Veritabanı (SQLite, PostgreSQL, Firebase, vb.)
-- Görsel depolama yöntemi (local upload, cloud storage)
-- Hosting ortamı
+## Kesinleşen Kararlar
+- Next.js 16 + Turbopack kullanılıyor (`next dev --turbo`)
+- Kategori görselleri: arka plan olarak karartılmış tam genişlik görsel
+- Yemekler: 2 sütunlu grid, kare görsel + isim + açıklama + fiyat
+- Kategoriler sayfa açılışında kapalı gelir
+- Görsel render: `next/image` yerine düz `<img>` tag kullanılıyor (fill+aspect-square çakışması nedeniyle)
+
+## Önemli Notlar
+- `next/image` fill prop'u ile aspect-square CSS birlikte kullanılmamalı, sonsuz döngüye giriyor
+- Admin panelinde hem kategori hem yemek için görsel yükleme mevcut

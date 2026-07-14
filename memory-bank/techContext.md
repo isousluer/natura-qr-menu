@@ -1,8 +1,8 @@
 # Tech Context
 
 ## Kesinleşen Stack
-- Next.js 15 (App Router, TypeScript)
-- Tailwind CSS
+- Next.js 16 (App Router, TypeScript, Turbopack)
+- Tailwind CSS v4
 - Supabase (PostgreSQL + Storage)
 - Vercel (hosting)
 
@@ -10,11 +10,11 @@
 ```
 src/
   app/
-    page.tsx              → Public menü (accordion)
+    page.tsx                      → Public menü (mock data, Supabase'e geçilecek)
     layout.tsx
     admin/
-      page.tsx            → Admin panel
-      login/page.tsx      → Giriş sayfası
+      page.tsx                    → Admin panel
+      login/page.tsx              → Giriş sayfası
     api/
       admin/
         login/route.ts
@@ -29,7 +29,8 @@ src/
   lib/
     supabase.ts
     types.ts
-  middleware.ts           → Admin route koruması
+  middleware.ts                   → Admin route koruması
+supabase-schema.sql               → Veritabanı şeması
 ```
 
 ## Ortam Değişkenleri (.env.local)
@@ -37,17 +38,19 @@ src/
 - NEXT_PUBLIC_SUPABASE_ANON_KEY
 - ADMIN_PASSWORD
 
-## Supabase Kurulumu
-1. supabase-schema.sql çalıştır (SQL Editor)
-2. Storage > New Bucket: `menu-images`, Public: true
-3. .env.local dosyasına URL ve anon key gir
-
 ## Geliştirme
 ```bash
-npm run dev   # http://localhost:3000
+npm run dev   # http://localhost:3000 (Turbopack ile)
 ```
 
-## Kısıtlar
-- Admin auth: basit cookie tabanlı (httpOnly)
-- Görsel yükleme: Supabase Storage `menu-images` bucket
+## Önemli Teknik Notlar
+- `next/image` fill prop'u ile aspect-square CSS kullanılmamalı → sonsuz döngü yaratır
+- Görsel render için düz `<img>` tag kullanılıyor
+- Admin auth: httpOnly cookie tabanlı, middleware ile korunuyor
+- Görsel yükleme: Supabase Storage `menu-images` bucket (public)
 - Vercel deploy: env değişkenlerini Vercel Dashboard'a ekle
+
+## Supabase Şema
+- categories: id, name, image_url, sort_order, is_active, created_at
+- menu_items: id, category_id, name, description, price, image_url, sort_order, is_active, created_at
+- RLS: public SELECT izni var, yazma işlemleri API üzerinden yapılıyor

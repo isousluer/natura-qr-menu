@@ -1,0 +1,79 @@
+'use client'
+
+import { useState } from 'react'
+import Image from 'next/image'
+import type { CategoryWithItems } from '@/lib/types'
+
+export default function MenuAccordion({ categories }: { categories: CategoryWithItems[] }) {
+  const [openId, setOpenId] = useState<string | null>(categories[0]?.id ?? null)
+
+  if (categories.length === 0) {
+    return <p className="text-center text-gray-500">Menü henüz hazırlanmadı.</p>
+  }
+
+  return (
+    <div className="space-y-3">
+      {categories.map((cat) => (
+        <div key={cat.id} className="rounded-xl shadow-sm overflow-hidden">
+          {/* Kategori Başlığı */}
+          <button
+            onClick={() => setOpenId(openId === cat.id ? null : cat.id)}
+            className="relative w-full h-24 flex items-center justify-between px-5 text-left overflow-hidden"
+          >
+            {cat.image_url ? (
+              <Image
+                src={cat.image_url}
+                alt={cat.name}
+                fill
+                className="object-cover brightness-50"
+                sizes="(max-width: 672px) 100vw, 672px"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gray-700" />
+            )}
+            <span className="relative z-10 font-bold text-white text-xl drop-shadow">{cat.name}</span>
+            <span className="relative z-10 text-white text-2xl">{openId === cat.id ? '−' : '+'}</span>
+          </button>
+
+          {/* Yemekler */}
+          {openId === cat.id && (
+            <div className="bg-white p-3 grid grid-cols-2 gap-3">
+              {cat.menu_items
+                .filter((item) => item.is_active)
+                .sort((a, b) => a.sort_order - b.sort_order)
+                .map((item) => (
+                  <div key={item.id} className="rounded-xl overflow-hidden border border-gray-100 flex flex-col">
+                    <div className="relative w-full aspect-square">
+                      {item.image_url ? (
+                        <Image
+                          src={item.image_url}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 672px) 50vw, 336px"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-100 flex items-center justify-center text-4xl">
+                          🍽️
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-3 flex flex-col gap-1">
+                      <h3 className="font-semibold text-gray-800 text-sm leading-tight">{item.name}</h3>
+                      {item.description && (
+                        <p className="text-xs text-gray-500 leading-snug line-clamp-2">{item.description}</p>
+                      )}
+                      <span className="font-bold text-green-600 text-sm mt-1">{item.price.toFixed(2)} ₺</span>
+                    </div>
+                  </div>
+                ))}
+              {cat.menu_items.filter((i) => i.is_active).length === 0 && (
+                <p className="px-5 py-4 text-sm text-gray-400">Bu kategoride ürün yok.</p>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}

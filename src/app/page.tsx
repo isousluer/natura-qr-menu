@@ -1,65 +1,42 @@
-import Image from "next/image";
+import type { CategoryWithItems } from '@/lib/types'
+import MenuAccordion from '@/components/MenuAccordion'
 
-export default function Home() {
+export const revalidate = 60
+
+const MOCK_DATA: CategoryWithItems[] = [
+  {
+    id: '1', name: 'Başlangıçlar', sort_order: 0, is_active: true,
+    image_url: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80',
+    menu_items: [
+      { id: '1', category_id: '1', name: 'Mercimek Çorbası', description: 'Geleneksel tarif, limon ile servis edilir', price: 85, image_url: 'https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=400&q=80', sort_order: 0, is_active: true },
+      { id: '2', category_id: '1', name: 'Ezme', description: 'Domates, biber, maydanoz', price: 75, image_url: 'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=400&q=80', sort_order: 1, is_active: true },
+    ],
+  },
+  {
+    id: '2', name: 'Ana Yemekler', sort_order: 1, is_active: true,
+    image_url: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80',
+    menu_items: [
+      { id: '3', category_id: '2', name: 'Izgara Köfte', description: 'El yapımı köfte, yanında pilav ve salata', price: 220, image_url: 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=400&q=80', sort_order: 0, is_active: true },
+      { id: '4', category_id: '2', name: 'Tavuk Şiş', description: 'Marine edilmiş tavuk, közlenmiş sebze ile', price: 195, image_url: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&q=80', sort_order: 1, is_active: true },
+    ],
+  },
+  {
+    id: '3', name: 'İçecekler', sort_order: 2, is_active: true,
+    image_url: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=800&q=80',
+    menu_items: [
+      { id: '5', category_id: '3', name: 'Ayran', description: 'Ev yapımı', price: 35, image_url: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&q=80', sort_order: 0, is_active: true },
+      { id: '6', category_id: '3', name: 'Limonata', description: 'Taze sıkılmış', price: 55, image_url: 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&q=80', sort_order: 1, is_active: true },
+    ],
+  },
+]
+
+export default async function MenuPage() {
+  const data = MOCK_DATA
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    <main className="max-w-2xl mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Menü</h1>
+      <MenuAccordion categories={data} />
+    </main>
+  )
 }

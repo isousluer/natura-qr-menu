@@ -16,21 +16,23 @@
 - [x] Admin panel — yemek CRUD + görsel yükleme
 - [x] Admin panel — ürün satırında küçük görsel gösterimi
 - [x] API routes (categories, menu-items, upload, login, logout)
-- [x] Middleware (admin route koruması)
-- [x] Supabase bağlantısı kuruldu (.env.local dolduruldu)
+- [x] middleware.ts → proxy.ts olarak güncellendi (Next.js 16)
+- [x] Supabase bağlantısı kuruldu
 - [x] SQL şeması çalıştırıldı
 - [x] Storage bucket oluşturuldu (menu-images, public)
-- [x] RLS politikaları eklendi (SELECT + INSERT + UPDATE + DELETE)
-- [x] Storage politikaları eklendi
+- [x] RLS + Storage politikaları eklendi
+- [x] Görsel silinme: kategori/ürün güncellenince veya silinince eski görsel storage'dan otomatik siliniyor
+- [x] Vercel'e deploy edildi
+- [x] Logo tasarımı: Natura (yeşil, serif) + BISTRO (kahverengi), gradient çizgi, MENÜ yazısı
 
 ## Yapılacaklar
-- [ ] Vercel'e deploy
 - [ ] Görsel optimizasyonu (Supabase Transform — isteğe bağlı)
 
 ## Bilinen Sorunlar
 - Henüz yok
 
 ## Notlar
-- Admin şifresi .env.local içinde ADMIN_PASSWORD değişkeni
-- next/image fill + aspect-square kullanılmamalı, sonsuz döngü yaratır, düz img tag kullanılıyor
-- Görsel yükleme async — dosya seçildikten sonra "Görsel yüklendi ✓" yazısı çıkınca kaydet butonuna basılmalı
+- Admin şifresi .env.local ve Vercel env'de ADMIN_PASSWORD değişkeni
+- next/image fill + aspect-square kullanılmamalı, düz img tag kullanılıyor
+- Görsel yükleme async — "Görsel yüklendi ✓" yazısını bekle, sonra kaydet
+- middleware.ts Next.js 16'da proxy.ts oldu, export adı da `proxy` olmalı

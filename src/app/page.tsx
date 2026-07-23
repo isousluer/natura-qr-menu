@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase'
 import type { CategoryWithItems } from '@/lib/types'
 import MenuAccordion from '@/components/MenuAccordion'
 
-export const revalidate = 60
+export const revalidate = 30
 
 export default async function MenuPage() {
   const { data: categories } = await supabase

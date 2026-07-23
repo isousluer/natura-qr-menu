@@ -24,8 +24,7 @@ export default async function MenuPage() {
           <div className="mt-1.5 h-px w-24 mx-auto" style={{ background: 'linear-gradient(to right, #3a7d44, #7c5c3e)' }} />
           <span className="mt-1 text-xs tracking-[0.3em] uppercase text-gray-400">Menü</span>
         </div>
-      </div>
-      <MenuAccordion categories={data} />
+      </div>      <MenuAccordion categories={data} />
     </main>
   )
 }

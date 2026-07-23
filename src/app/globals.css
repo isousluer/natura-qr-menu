@@ -1,7 +1,1 @@
 @import "tailwindcss";
-
-@media print {
-  .print-open {
-    display: grid !important;
-  }
-}

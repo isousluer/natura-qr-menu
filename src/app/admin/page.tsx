@@ -95,7 +95,7 @@ export default function AdminPage() {
       ...itemForm,
       price: parseFloat(itemForm.price),
       category_id: addingToCat ?? editItem?.category_id,
-      sort_order: editItem?.sort_order ?? (items[addingToCat!]?.length ?? 0),
+      sort_order: editItem?.display_order ?? (items[addingToCat!]?.length ?? 0),
       is_active: editItem?.is_active ?? true,
     }
     if (editItem) {

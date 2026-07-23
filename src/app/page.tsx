@@ -7,9 +7,9 @@ export const revalidate = 60
 export default async function MenuPage() {
   const { data: categories } = await supabase
     .from('categories')
-    .select('*, menu_items(*)')
+    .select('*, items(*)')
     .eq('is_active', true)
-    .order('sort_order')
+    .order('display_order')
 
   const data = (categories as CategoryWithItems[]) ?? []
 

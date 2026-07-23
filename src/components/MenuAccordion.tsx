@@ -32,9 +32,9 @@ export default function MenuAccordion({ categories }: { categories: CategoryWith
 
             {openId === cat.id && (
               <div className="bg-white p-3 grid grid-cols-2 md:grid-cols-3 gap-3">
-                {cat.menu_items
+                {cat.items
                   .filter((item) => item.is_active)
-                  .sort((a, b) => a.sort_order - b.sort_order)
+                  .sort((a, b) => a.display_order - b.display_order)
                   .map((item) => (
                     <div key={item.id} className="rounded-xl overflow-hidden border border-gray-100 flex flex-col">
                       <div
@@ -53,11 +53,11 @@ export default function MenuAccordion({ categories }: { categories: CategoryWith
                         {item.description && (
                           <p className="text-xs text-gray-500 leading-snug line-clamp-2">{item.description}</p>
                         )}
-                        <span className="font-bold text-green-600 text-sm mt-1">{item.price.toFixed(2)} ₺</span>
+                        <span className="font-bold text-green-600 text-sm mt-1">{item.price} ₺</span>
                       </div>
                     </div>
                   ))}
-                {cat.menu_items.filter((i) => i.is_active).length === 0 && (
+                {cat.items.filter((i) => i.is_active).length === 0 && (
                   <p className="px-5 py-4 text-sm text-gray-400 col-span-2">Bu kategoride ürün yok.</p>
                 )}
               </div>

@@ -13,7 +13,6 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params
   const body = await req.json()
 
-  // Yeni görsel varsa eskisini sil
   if (body.image_url) {
     const { data: old } = await supabase.from('categories').select('image_url').eq('id', id).single()
     if (old?.image_url && old.image_url !== body.image_url) {
@@ -23,7 +22,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const { data, error } = await supabase
     .from('categories')
-    .update({ name: body.name, image_url: body.image_url ?? null, sort_order: body.sort_order, is_active: body.is_active })
+    .update({ name: body.name, image_url: body.image_url ?? null, display_order: body.display_order, is_active: body.is_active })
     .eq('id', id)
     .select()
     .single()
@@ -35,7 +34,6 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   if (!(await isAuth())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { id } = await params
 
-  // Kategori silinince görselini de sil
   const { data: old } = await supabase.from('categories').select('image_url').eq('id', id).single()
   await deleteStorageImage(old?.image_url)
 

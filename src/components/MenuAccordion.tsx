@@ -11,8 +11,20 @@ export default function MenuAccordion({ categories }: { categories: CategoryWith
     return <p className="text-center text-gray-500">Menü henüz hazırlanmadı.</p>
   }
 
+  function handlePrint() {
+    window.print()
+  }
+
   return (
     <>
+      <div className="print:hidden flex justify-end mb-3">
+        <button
+          onClick={handlePrint}
+          className="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1"
+        >
+          🖨️ Menüyü Yazdır
+        </button>
+      </div>
       <div className="space-y-3">
         {categories.map((cat) => (
           <div key={cat.id} className="rounded-xl shadow-sm overflow-hidden">
@@ -30,8 +42,7 @@ export default function MenuAccordion({ categories }: { categories: CategoryWith
               <span className="relative z-10 text-white text-2xl">{openId === cat.id ? '−' : '+'}</span>
             </button>
 
-            {openId === cat.id && (
-              <div className="bg-white p-3 grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className={`bg-white p-3 grid grid-cols-2 md:grid-cols-3 gap-3 ${openId === cat.id ? '' : 'hidden print:grid'}`}>
                 {cat.items
                   .filter((item) => item.is_active)
                   .sort((a, b) => a.display_order - b.display_order)
@@ -61,7 +72,6 @@ export default function MenuAccordion({ categories }: { categories: CategoryWith
                   <p className="px-5 py-4 text-sm text-gray-400 col-span-2">Bu kategoride ürün yok.</p>
                 )}
               </div>
-            )}
           </div>
         ))}
       </div>

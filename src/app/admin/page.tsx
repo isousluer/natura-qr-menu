@@ -218,7 +218,7 @@ export default function AdminPage() {
                       )}
                       <div>
                         <p className="font-medium text-gray-800 text-sm">{item.name}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{item.price.toFixed(2)} ₺</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{item.price} ₺</p>
                       </div>
                     </div>
                     <div className="flex gap-3">

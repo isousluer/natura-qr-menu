@@ -69,14 +69,14 @@ export default function AdminPage() {
       await fetch(`/api/admin/categories/${editCat.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: catForm.name, image_url: catForm.image_url || editCat.image_url, sort_order: editCat.sort_order, is_active: editCat.is_active }),
+        body: JSON.stringify({ name: catForm.name, image_url: catForm.image_url || editCat.image_url, display_order: editCat.display_order, is_active: editCat.is_active }),
       })
       setEditCat(null)
     } else {
       await fetch('/api/admin/categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: catForm.name, image_url: catForm.image_url || null, sort_order: categories.length }),
+        body: JSON.stringify({ name: catForm.name, image_url: catForm.image_url || null, display_order: categories.length }),
       })
     }
     setCatForm({ name: '', image_url: '' })
@@ -95,7 +95,7 @@ export default function AdminPage() {
       ...itemForm,
       price: parseFloat(itemForm.price),
       category_id: addingToCat ?? editItem?.category_id,
-      sort_order: editItem?.display_order ?? (items[addingToCat!]?.length ?? 0),
+      display_order: editItem?.display_order ?? (items[addingToCat!]?.length ?? 0),
       is_active: editItem?.is_active ?? true,
     }
     if (editItem) {

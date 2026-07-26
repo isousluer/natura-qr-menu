@@ -1,10 +1,10 @@
 # Active Context
 
 ## Mevcut Durum
-Proje canlıda. Vercel'e deploy edildi, Supabase bağlantısı çalışıyor. Admin panelden kategori ve yemek yönetimi yapılabiliyor.
+Proje canlıda ve tam çalışır durumda. Tüm temel özellikler tamamlandı.
 
 ## Odak Noktası
-Yeni özellik ve iyileştirmeler.
+Yeni özellik talepleri.
 
 ## Sonraki Adımlar
 - İsteğe bağlı: Supabase Transform ile görsel optimizasyonu
@@ -16,13 +16,15 @@ Yeni özellik ve iyileştirmeler.
 - Kategoriler sayfa açılışında kapalı
 - Görsele tıklayınca lightbox açılıyor
 - Görsel render: düz img tag (next/image fill kullanılmıyor)
-- Admin panelde ürün satırında 40x40 küçük görsel
-- Eski görseller kategori/ürün güncellenince veya silinince storage'dan otomatik siliniyor
-- Logo: Natura (yeşil #3a7d44, Georgia serif, text-5xl) + BISTRO (kahverengi #7c5c3e, text-3xl) tek satırda, altında gradient çizgi ve MENÜ yazısı
+- Logo: Natura (yeşil #3a7d44, Georgia serif, text-3xl) + BISTRO (kahverengi #7c5c3e, text-xl) tek satırda
+- Admin panel: formlar varsayılan kapalı, düzenleme formu ilgili öğenin hemen altında açılıyor
+- Kategori sıralama: ▲▼ butonları ile display_order güncelleniyor
+- revalidate = 30 saniye
 
 ## Önemli Notlar
 - next/image fill + aspect-square birlikte kullanılmamalı
 - Görsel yükleme async — "Görsel yüklendi ✓" yazısını bekle
 - Supabase RLS: SELECT herkese açık, yazma işlemleri API üzerinden
-- Next.js 16: middleware.ts → proxy.ts, export adı `proxy` olmalı
-- VS Code'da auto push: `"git.postCommitCommand": "push"` ayarı aktif
+- Next.js 16: proxy.ts, export adı `proxy` olmalı
+- price alanı text tipinde, toFixed() kullanılmamalı
+- VS Code auto push: "git.postCommitCommand": "push" ayarı aktif

@@ -5,55 +5,61 @@
 
 ## Veri Modeli
 
-### Category
+### categories
 - id (uuid)
-- name
-- image_url (kategori arka plan görseli)
-- sort_order
-- is_active
+- name (text)
+- image_url (text, nullable) — kategori arka plan görseli
+- display_order (integer)
+- is_active (boolean)
+- created_at (timestamptz)
 
-### MenuItem
+### items
 - id (uuid)
-- category_id (FK → categories, cascade delete)
-- name
-- description
-- price (numeric 10,2)
-- image_url
-- sort_order
-- is_active
+- category_id (uuid, FK → categories, cascade delete)
+- name (text)
+- description (text, default '')
+- price (text) — numeric değil, text
+- image_url (text, nullable)
+- display_order (integer)
+- is_active (boolean)
+- created_at (timestamptz)
 
 ## UI Patterns
 
 ### Public Menü
-- Accordion: kategori başlığına tıklanınca yemekler açılır/kapanır
-- Kategoriler sayfa açılışında kapalı
-- Kategori başlığı: h-24, arka planda karartılmış görsel, üstünde beyaz yazı (text-3xl bold)
-- Yemekler: grid-cols-2 (mobil) / grid-cols-3 (md+), kare görsel + isim + açıklama + fiyat
-- Görsele tıklayınca lightbox (bg-black/80, tam ekran, dışarı tıklayınca kapanır)
+- Logo: Natura (yeşil, Georgia serif) + BISTRO (kahverengi) + gradient çizgi + MENÜ
+- Accordion: kategori başlığına tıklanınca yemekler açılır/kapanır, kapalı başlar
+- Kategori başlığı: h-24, karartılmış arka plan görseli, beyaz yazı (text-3xl bold)
+- Yemekler: grid-cols-2 (mobil) / grid-cols-3 (md+)
+- Yemek kartı: kare görsel (img tag) + isim + açıklama + fiyat
+- Görsele tıklayınca lightbox (bg-black/80, dışarı tıklayınca kapanır)
 - Görsel yoksa 🍽️ placeholder
-- Görsel render: düz img tag (next/image fill kullanılmıyor)
 
 ### Admin Panel
-- Cookie tabanlı auth (httpOnly, 7 gün), middleware ile /admin/* korunuyor
-- Kategori formu: isim + görsel yükleme butonu
-- Kategori listesi: accordion, her kategoride ürün listesi + ürün formu
-- Ürün satırı: 40x40 görsel + isim + fiyat + düzenle/sil butonları
+- Cookie tabanlı auth (httpOnly, 7 gün), proxy.ts ile /admin/* korunuyor
+- Yeni kategori butonu: varsayılan görünür, forma basınca kaybolur
+- Yeni kategori formu: butona basınca açılır, iptal ile kapanır
+- Kategori düzenleme formu: kategorinin hemen altında açılır
+- Kategori sıralama: ▲▼ butonları, display_order güncellenir
+- Ürün düzenleme formu: ürünün hemen altında açılır
+- Yeni ürün formu: kategorinin en altında + Ürün Ekle butonu
 - ImageUpload bileşeni: gizli file input, styled buton, async yükleme
 
 ## API Yapısı
-- GET  /api/admin/categories         → tüm kategoriler
-- POST /api/admin/categories         → kategori ekle (name, image_url, sort_order)
-- PUT  /api/admin/categories/[id]    → kategori güncelle
-- DEL  /api/admin/categories/[id]    → kategori sil
-- GET  /api/admin/menu-items         → yemekler (category_id filtresi)
-- POST /api/admin/menu-items         → yemek ekle
-- PUT  /api/admin/menu-items/[id]    → yemek güncelle
-- DEL  /api/admin/menu-items/[id]    → yemek sil
-- POST /api/admin/upload             → Supabase Storage'a görsel yükle → publicUrl döner
+- GET  /api/admin/categories         → tüm kategoriler (display_order sıralı)
+- POST /api/admin/categories         → kategori ekle
+- PUT  /api/admin/categories/[id]    → kategori güncelle + eski görseli sil
+- DEL  /api/admin/categories/[id]    → kategori sil + görselini sil
+- GET  /api/admin/menu-items         → items (category_id filtresi, display_order sıralı)
+- POST /api/admin/menu-items         → ürün ekle
+- PUT  /api/admin/menu-items/[id]    → ürün güncelle + eski görseli sil
+- DEL  /api/admin/menu-items/[id]    → ürün sil + görselini sil
+- POST /api/admin/upload             → Supabase Storage'a yükle → publicUrl döner
 - POST /api/admin/login              → cookie set
 - POST /api/admin/logout             → cookie sil
 
-## Supabase RLS Politikaları
-- categories: Public SELECT, authenticated INSERT/UPDATE/DELETE
-- menu_items: Public SELECT, authenticated INSERT/UPDATE/DELETE
-- storage.objects (menu-images): Public SELECT/INSERT/UPDATE/DELETE
+## Supabase
+- Proje: kvdbfpsmrciobcvbnzqe.supabase.co
+- RLS: public SELECT, INSERT/UPDATE/DELETE herkese açık (API cookie kontrolü yapıyor)
+- Storage: menu-images bucket (public), tüm operasyonlara izin var
+- deleteStorageImage(): URL'den dosya adını parse eder, storage'dan siler

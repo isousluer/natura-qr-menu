@@ -42,6 +42,7 @@ export default function AdminPage() {
   const [items, setItems] = useState<Record<string, MenuItem[]>>({})
   const [openCatId, setOpenCatId] = useState<string | null>(null)
 
+  const [showCatForm, setShowCatForm] = useState(false)
   const [catForm, setCatForm] = useState({ name: '', image_url: '' })
   const [editCat, setEditCat] = useState<Category | null>(null)
 
@@ -80,7 +81,20 @@ export default function AdminPage() {
       })
     }
     setCatForm({ name: '', image_url: '' })
+    setShowCatForm(false)
     loadCategories()
+  }
+
+  function startEditCat(cat: Category) {
+    setEditCat(cat)
+    setCatForm({ name: cat.name, image_url: '' })
+    setShowCatForm(false)
+  }
+
+  function cancelCatForm() {
+    setEditCat(null)
+    setCatForm({ name: '', image_url: '' })
+    setShowCatForm(false)
   }
 
   async function deleteCategory(id: string) {
@@ -89,11 +103,35 @@ export default function AdminPage() {
     loadCategories()
   }
 
+  async function moveCategory(index: number, direction: 'up' | 'down') {
+    const newCats = [...categories]
+    const swapIndex = direction === 'up' ? index - 1 : index + 1
+    if (swapIndex < 0 || swapIndex >= newCats.length) return
+
+    const temp = newCats[index]
+    newCats[index] = newCats[swapIndex]
+    newCats[swapIndex] = temp
+
+    // display_order güncelle
+    await Promise.all([
+      fetch(`/api/admin/categories/${newCats[index].id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...newCats[index], display_order: index }),
+      }),
+      fetch(`/api/admin/categories/${newCats[swapIndex].id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...newCats[swapIndex], display_order: swapIndex }),
+      }),
+    ])
+    loadCategories()
+  }
+
   async function saveItem(e: React.FormEvent) {
     e.preventDefault()
     const payload = {
       ...itemForm,
-      price: parseFloat(itemForm.price),
       category_id: addingToCat ?? editItem?.category_id,
       display_order: editItem?.display_order ?? (items[addingToCat!]?.length ?? 0),
       is_active: editItem?.is_active ?? true,
@@ -150,44 +188,61 @@ export default function AdminPage() {
       </div>
 
       {/* Kategori Formu */}
-      <div className="bg-white rounded-2xl shadow-sm p-5 mb-6">
-        <h2 className="font-semibold text-gray-700 mb-4">{editCat ? 'Kategori Düzenle' : 'Yeni Kategori Ekle'}</h2>
-        <form onSubmit={saveCategory} className="space-y-3">
-          <input
-            value={catForm.name}
-            onChange={(e) => setCatForm((p) => ({ ...p, name: e.target.value }))}
-            placeholder="Kategori adı"
-            required
-            className={INPUT}
-          />
-          <ImageUpload
-            label="Kategori arka plan görseli"
-            onUpload={(url) => setCatForm((p) => ({ ...p, image_url: url }))}
-            uploaded={!!catForm.image_url || !!editCat?.image_url}
-          />
-          <div className="flex gap-2 pt-1">
-            <button type="submit" className={BTN_PRIMARY}>
-              {editCat ? 'Güncelle' : 'Kategori Ekle'}
-            </button>
-            {editCat && (
-              <button type="button" onClick={() => { setEditCat(null); setCatForm({ name: '', image_url: '' }) }} className={BTN_SECONDARY}>
-                İptal
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
+      {showCatForm && (
+        <div className="bg-white rounded-2xl shadow-sm p-5 mb-6">
+          <h2 className="font-semibold text-gray-700 mb-4">Yeni Kategori Ekle</h2>
+          <form onSubmit={saveCategory} className="space-y-3">
+            <input
+              value={catForm.name}
+              onChange={(e) => setCatForm((p) => ({ ...p, name: e.target.value }))}
+              placeholder="Kategori adı"
+              required
+              className={INPUT}
+              autoFocus
+            />
+            <ImageUpload
+              label="Kategori arka plan görseli"
+              onUpload={(url) => setCatForm((p) => ({ ...p, image_url: url }))}
+              uploaded={!!catForm.image_url}
+            />
+            <div className="flex gap-2 pt-1">
+              <button type="submit" className={BTN_PRIMARY}>Kategori Ekle</button>
+              <button type="button" onClick={cancelCatForm} className={BTN_SECONDARY}>İptal</button>
+            </div>
+          </form>
+        </div>
+      )}
+      {!showCatForm && (
+        <button
+          onClick={() => { setShowCatForm(true); setEditCat(null); setCatForm({ name: '', image_url: '' }) }}
+          className="w-full bg-white rounded-2xl shadow-sm p-4 mb-6 text-green-600 font-medium text-sm hover:bg-green-50 border-2 border-dashed border-green-200"
+        >
+          + Yeni Kategori Ekle
+        </button>
+      )}
 
       {/* Kategoriler */}
       <div className="space-y-3">
         {categories.length === 0 && (
           <p className="text-center text-gray-400 text-sm py-8">Henüz kategori yok.</p>
         )}
-        {categories.map((cat) => (
+        {categories.map((cat, index) => (
           <div key={cat.id} className="bg-white rounded-2xl shadow-sm overflow-hidden">
 
             {/* Kategori Satırı */}
             <div className="flex items-center justify-between px-5 py-4">
+              <div className="flex items-center gap-2 mr-2">
+                <button
+                  onClick={() => moveCategory(index, 'up')}
+                  disabled={index === 0}
+                  className="text-gray-300 hover:text-gray-500 disabled:opacity-20 text-lg leading-none"
+                >▲</button>
+                <button
+                  onClick={() => moveCategory(index, 'down')}
+                  disabled={index === categories.length - 1}
+                  className="text-gray-300 hover:text-gray-500 disabled:opacity-20 text-lg leading-none"
+                >▼</button>
+              </div>
               <button
                 onClick={() => setOpenCatId(openCatId === cat.id ? null : cat.id)}
                 className="font-semibold text-gray-800 text-left flex-1 flex items-center gap-2"
@@ -196,7 +251,7 @@ export default function AdminPage() {
                 {!cat.is_active && <span className="text-xs text-gray-400 font-normal">(pasif)</span>}
               </button>
               <div className="flex items-center gap-3">
-                <button onClick={() => { setEditCat(cat); setCatForm({ name: cat.name, image_url: '' }) }} className="text-sm text-blue-500 hover:text-blue-700">Düzenle</button>
+                <button onClick={() => startEditCat(cat)} className="text-sm text-blue-500 hover:text-blue-700">Düzenle</button>
                 <button onClick={() => deleteCategory(cat.id)} className="text-sm text-red-400 hover:text-red-600">Sil</button>
                 <button onClick={() => setOpenCatId(openCatId === cat.id ? null : cat.id)} className="text-gray-400 text-lg w-5 text-center">
                   {openCatId === cat.id ? '−' : '+'}
@@ -204,32 +259,94 @@ export default function AdminPage() {
               </div>
             </div>
 
+            {/* Kategori Düzenle Formu */}
+            {editCat?.id === cat.id && (
+              <div className="border-t border-gray-100 bg-gray-50 px-5 py-4">
+                <p className="text-sm font-medium text-gray-700 mb-3">Kategori Düzenle</p>
+                <form onSubmit={saveCategory} className="space-y-3">
+                  <input
+                    value={catForm.name}
+                    onChange={(e) => setCatForm((p) => ({ ...p, name: e.target.value }))}
+                    placeholder="Kategori adı"
+                    required
+                    className={INPUT}
+                    autoFocus
+                  />
+                  <ImageUpload
+                    label="Kategori arka plan görseli"
+                    onUpload={(url) => setCatForm((p) => ({ ...p, image_url: url }))}
+                    uploaded={!!catForm.image_url || !!editCat?.image_url}
+                  />
+                  <div className="flex gap-2 pt-1">
+                    <button type="submit" className={BTN_PRIMARY}>Güncelle</button>
+                    <button type="button" onClick={cancelCatForm} className={BTN_SECONDARY}>İptal</button>
+                  </div>
+                </form>
+              </div>
+            )}
+
             {/* Ürünler */}
             {openCatId === cat.id && (
               <div className="border-t border-gray-100 px-5 py-4 space-y-3">
-
                 {(items[cat.id] ?? []).map((item) => (
-                  <div key={item.id} className="flex justify-between items-center py-2.5 border-b border-gray-50 last:border-0">
-                    <div className="flex items-center gap-3">
-                      {item.image_url ? (
-                        <img src={item.image_url} alt={item.name} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
-                      ) : (
-                        <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-lg flex-shrink-0">🍽️</div>
-                      )}
-                      <div>
-                        <p className="font-medium text-gray-800 text-sm">{item.name}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{item.price} ₺</p>
+                  <div key={item.id}>
+                    <div className="flex justify-between items-center py-2.5 border-b border-gray-50">
+                      <div className="flex items-center gap-3">
+                        {item.image_url ? (
+                          <img src={item.image_url} alt={item.name} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-lg flex-shrink-0">🍽️</div>
+                        )}
+                        <div>
+                          <p className="font-medium text-gray-800 text-sm">{item.name}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">{item.price} ₺</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <button onClick={() => startEditItem(item)} className="text-sm text-blue-500 hover:text-blue-700">Düzenle</button>
+                        <button onClick={() => deleteItem(item.id, cat.id)} className="text-sm text-red-400 hover:text-red-600">Sil</button>
                       </div>
                     </div>
-                    <div className="flex gap-3">
-                      <button onClick={() => startEditItem(item)} className="text-sm text-blue-500 hover:text-blue-700">Düzenle</button>
-                      <button onClick={() => deleteItem(item.id, cat.id)} className="text-sm text-red-400 hover:text-red-600">Sil</button>
-                    </div>
+
+                    {editItem?.id === item.id && (
+                      <form onSubmit={saveItem} className="space-y-3 py-3 border-b border-gray-100 bg-gray-50 px-3 rounded-xl mt-1">
+                        <p className="text-sm font-medium text-gray-700">Ürün Düzenle</p>
+                        <input
+                          value={itemForm.name}
+                          onChange={(e) => setItemForm((p) => ({ ...p, name: e.target.value }))}
+                          placeholder="Ürün adı"
+                          required
+                          className={INPUT}
+                        />
+                        <textarea
+                          value={itemForm.description}
+                          onChange={(e) => setItemForm((p) => ({ ...p, description: e.target.value }))}
+                          placeholder="İçerik / açıklama"
+                          rows={2}
+                          className={INPUT}
+                        />
+                        <input
+                          value={itemForm.price}
+                          onChange={(e) => setItemForm((p) => ({ ...p, price: e.target.value }))}
+                          placeholder="Fiyat (₺)"
+                          required
+                          className={INPUT}
+                        />
+                        <ImageUpload
+                          label="Ürün görseli"
+                          onUpload={(url) => setItemForm((p) => ({ ...p, image_url: url }))}
+                          uploaded={!!itemForm.image_url}
+                        />
+                        <div className="flex gap-2">
+                          <button type="submit" className={BTN_PRIMARY}>Güncelle</button>
+                          <button type="button" onClick={cancelItem} className={BTN_SECONDARY}>İptal</button>
+                        </div>
+                      </form>
+                    )}
                   </div>
                 ))}
 
-                {/* Ürün Formu */}
-                {(addingToCat === cat.id || editItem?.category_id === cat.id) ? (
+                {addingToCat === cat.id ? (
                   <form onSubmit={saveItem} className="space-y-3 pt-2 border-t border-gray-100">
                     <p className="text-sm font-medium text-gray-700">{editItem ? 'Ürün Düzenle' : 'Yeni Ürün'}</p>
                     <input
@@ -250,9 +367,6 @@ export default function AdminPage() {
                       value={itemForm.price}
                       onChange={(e) => setItemForm((p) => ({ ...p, price: e.target.value }))}
                       placeholder="Fiyat (₺)"
-                      type="number"
-                      step="0.01"
-                      min="0"
                       required
                       className={INPUT}
                     />

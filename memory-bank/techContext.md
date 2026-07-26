@@ -10,7 +10,7 @@
 ```
 src/
   app/
-    page.tsx                      → Public menü (Supabase'den veri)
+    page.tsx                      → Public menü (revalidate: 30s)
     layout.tsx
     admin/
       page.tsx                    → Admin panel
@@ -29,13 +29,13 @@ src/
   lib/
     supabase.ts
     types.ts
-    storage.ts                    → deleteStorageImage yardımcı fonksiyonu
+    storage.ts                    → deleteStorageImage()
   proxy.ts                        → Admin route koruması (Next.js 16)
 supabase-schema.sql
 ```
 
 ## Ortam Değişkenleri
-- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_URL=https://kvdbfpsmrciobcvbnzqe.supabase.co
 - NEXT_PUBLIC_SUPABASE_ANON_KEY
 - ADMIN_PASSWORD
 (hem .env.local hem Vercel Dashboard'da tanımlı)
@@ -49,12 +49,8 @@ npm run dev   # http://localhost:3000 (Turbopack ile)
 - next/image fill + aspect-square kullanılmamalı → sonsuz döngü
 - Görsel render için düz img tag kullanılıyor
 - Admin auth: httpOnly cookie, proxy.ts ile /admin/* korunuyor
-- Next.js 16: middleware.ts → proxy.ts, export adı `proxy` olmalı
-- Görsel silinme: deleteStorageImage() URL'den dosya adını parse eder, storage'dan siler
+- Next.js 16: proxy.ts, export adı `proxy` olmalı
+- price alanı text tipinde → toFixed() kullanılmamalı
+- Görsel silinme: deleteStorageImage() URL'den dosya adını parse eder
 - VS Code auto push: "git.postCommitCommand": "push"
-
-## Supabase Şema
-- categories: id, name, image_url, sort_order, is_active, created_at
-- menu_items: id, category_id, name, description, price, image_url, sort_order, is_active, created_at
-- RLS: public SELECT, INSERT/UPDATE/DELETE herkese açık (API üzerinden kontrol ediliyor)
-- Storage: menu-images bucket (public), tüm operasyonlara izin var
+- revalidate = 30 saniye (menü güncellemeleri 30s içinde yansır)

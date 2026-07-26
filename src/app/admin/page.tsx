@@ -11,12 +11,48 @@ const BTN_SECONDARY = 'border border-gray-200 px-4 py-2.5 rounded-lg text-sm tex
 function ImageUpload({ label, onUpload, uploaded }: { label: string; onUpload: (url: string) => void; uploaded: boolean }) {
   const [loading, setLoading] = useState(false)
 
+  async function compressToWebP(file: File, maxKB = 300): Promise<Blob> {
+    return new Promise((resolve) => {
+      const img = new Image()
+      const url = URL.createObjectURL(file)
+      img.onload = () => {
+        URL.revokeObjectURL(url)
+        const canvas = document.createElement('canvas')
+        // Max 1200px genişlik
+        const maxW = 1200
+        const scale = img.width > maxW ? maxW / img.width : 1
+        canvas.width = img.width * scale
+        canvas.height = img.height * scale
+        const ctx = canvas.getContext('2d')!
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+        // Kaliteyi düşürerek maxKB altına in
+        let quality = 0.85
+        const tryCompress = () => {
+          canvas.toBlob((blob) => {
+            if (!blob) return resolve(new Blob())
+            if (blob.size <= maxKB * 1024 || quality <= 0.1) {
+              resolve(blob)
+            } else {
+              quality -= 0.1
+              tryCompress()
+            }
+          }, 'image/webp', quality)
+        }
+        tryCompress()
+      }
+      img.src = url
+    })
+  }
+
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     setLoading(true)
+    const webpBlob = await compressToWebP(file)
+    const webpFile = new File([webpBlob], `${Date.now()}.webp`, { type: 'image/webp' })
     const fd = new FormData()
-    fd.append('file', file)
+    fd.append('file', webpFile)
     const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
     const { url } = await res.json()
     onUpload(url)

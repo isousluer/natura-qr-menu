@@ -5,6 +5,7 @@
 - Tailwind CSS v4
 - Supabase (PostgreSQL + Storage)
 - Vercel (hosting)
+- @dnd-kit/core + @dnd-kit/sortable (sürükle-bırak sıralama)
 
 ## Proje Yapısı
 ```

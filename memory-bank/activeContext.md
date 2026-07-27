@@ -18,7 +18,9 @@ Yeni özellik talepleri.
 - Görsel render: düz img tag (next/image fill kullanılmıyor)
 - Logo: Natura (yeşil #3a7d44, Georgia serif, text-3xl) + BISTRO (kahverengi #7c5c3e, text-xl) tek satırda
 - Admin panel: formlar varsayılan kapalı, düzenleme formu ilgili öğenin hemen altında açılıyor
-- Kategori sıralama: ▲▼ butonları ile display_order güncelleniyor
+- Kategori ve ürün sıralama: sürükle-bırak (@dnd-kit/core + @dnd-kit/sortable)
+- dnd-kit sensor: sadece PointerSensor (TouchSensor kullanılmıyor — mobilde scroll ile çakışıyor)
+- DragHandle: touch-action: none, listeners doğrudan handle'a bağlı
 - revalidate = 30 saniye
 
 ## Önemli Notlar

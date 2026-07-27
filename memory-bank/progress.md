@@ -17,6 +17,7 @@
 - [x] Admin panel — yemek CRUD + görsel yükleme
 - [x] Admin panel — ürün satırında küçük görsel gösterimi
 - [x] Admin panel — kategori sıralama (▲▼ butonları)
+- [x] Admin panel — kategori ve ürün sıralama: sürükle-bırak (@dnd-kit, sadece PointerSensor)
 - [x] Admin panel — yeni kategori formu varsayılan kapalı, butona basınca açılıyor
 - [x] Admin panel — kategori düzenleme formu kategorinin hemen altında açılıyor
 - [x] Admin panel — ürün düzenleme formu ürünün hemen altında açılıyor
@@ -42,3 +43,4 @@
 - Görsel yükleme async — "Görsel yüklendi ✓" yazısını bekle, sonra kaydet
 - Next.js 16: middleware.ts → proxy.ts, export adı `proxy` olmalı
 - price alanı text tipinde (numeric değil)
+- dnd-kit: TouchSensor + PointerSensor birlikte kullanılmamalı — mobilde scroll ile çakışır, sadece PointerSensor yeterli

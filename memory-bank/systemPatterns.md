@@ -40,7 +40,11 @@
 - Yeni kategori butonu: varsayılan görünür, forma basınca kaybolur
 - Yeni kategori formu: butona basınca açılır, iptal ile kapanır
 - Kategori düzenleme formu: kategorinin hemen altında açılır
-- Kategori sıralama: ▲▼ butonları, display_order güncellenir
+- Kategori ve ürün sıralama: sürükle-bırak
+  - @dnd-kit/core + @dnd-kit/sortable
+  - Sadece PointerSensor (TouchSensor mobilde scroll ile çakışıyor)
+  - DragHandle: `touch-action: none`, listeners doğrudan handle span'a bağlı
+  - Drag end'de tüm sıra API'ye toplu yazılıyor (Promise.all)
 - Ürün düzenleme formu: ürünün hemen altında açılır
 - Yeni ürün formu: kategorinin en altında + Ürün Ekle butonu
 - ImageUpload bileşeni: gizli file input, styled buton, async yükleme

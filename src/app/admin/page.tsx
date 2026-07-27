@@ -92,7 +92,7 @@ function ImageUpload({ label, onUpload, uploaded }: { label: string; onUpload: (
 function SortableCategory({
   cat, index, total, openCatId, setOpenCatId, editCat, startEditCat, deleteCategory,
   catForm, setCatForm, saveCategory, cancelCatForm,
-  items, editItem, addingToCat, itemForm, setItemForm,
+  items, editItem, addingToCat, setAddingToCat, itemForm, setItemForm,
   startEditItem, cancelItem, saveItem, deleteItem,
   itemSensors, handleItemDragEnd,
 }: {

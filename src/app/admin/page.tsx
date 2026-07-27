@@ -26,7 +26,7 @@ const BTN_SECONDARY = 'border border-gray-200 px-4 py-2.5 rounded-lg text-sm tex
 
 function DragHandle() {
   return (
-    <span className="text-gray-300 hover:text-gray-400 cursor-grab active:cursor-grabbing px-1 select-none text-lg">
+    <span className="text-gray-300 hover:text-gray-400 cursor-grab active:cursor-grabbing px-1 select-none text-lg" style={{ touchAction: 'none' }}>
       ⠿
     </span>
   )
@@ -286,7 +286,7 @@ export default function AdminPage() {
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } })
   )
 
   async function loadCategories() {

@@ -7,7 +7,6 @@ import {
   DndContext,
   closestCenter,
   PointerSensor,
-  TouchSensor,
   useSensor,
   useSensors,
   DragEndEvent,
@@ -24,9 +23,13 @@ const INPUT = 'w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focu
 const BTN_PRIMARY = 'bg-green-600 text-white px-4 py-2.5 rounded-lg hover:bg-green-700 text-sm font-medium'
 const BTN_SECONDARY = 'border border-gray-200 px-4 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50'
 
-function DragHandle() {
+function DragHandle(props: React.HTMLAttributes<HTMLSpanElement>) {
   return (
-    <span className="text-gray-300 hover:text-gray-400 cursor-grab active:cursor-grabbing px-1 select-none text-lg" style={{ touchAction: 'none' }}>
+    <span
+      {...props}
+      className="text-gray-300 hover:text-gray-400 cursor-grab active:cursor-grabbing px-1 select-none text-lg"
+      style={{ touchAction: 'none' }}
+    >
       ⠿
     </span>
   )
@@ -124,7 +127,7 @@ function SortableCategory({
   return (
     <div ref={setNodeRef} style={style} className="bg-white rounded-2xl shadow-sm overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4">
-        <span {...attributes} {...listeners}><DragHandle /></span>
+        <DragHandle {...attributes} {...listeners} />
         <button
           onClick={() => setOpenCatId(openCatId === cat.id ? null : cat.id)}
           className="font-semibold text-gray-800 text-left flex-1 flex items-center gap-2 mx-2"
@@ -235,7 +238,7 @@ function SortableItem({
   return (
     <div ref={setNodeRef} style={style}>
       <div className="flex justify-between items-center py-2.5 border-b border-gray-50">
-        <span {...attributes} {...listeners}><DragHandle /></span>
+        <DragHandle {...attributes} {...listeners} />
         <div className="flex items-center gap-3 flex-1 mx-2">
           {item.image_url ? (
             <img src={item.image_url} alt={item.name} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
@@ -285,8 +288,7 @@ export default function AdminPage() {
   const [addingToCat, setAddingToCat] = useState<string | null>(null)
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   )
 
   async function loadCategories() {

@@ -96,7 +96,7 @@ function SortableCategory({
   cat, index, total, openCatId, setOpenCatId, editCat, startEditCat, deleteCategory,
   catForm, setCatForm, saveCategory, cancelCatForm,
   items, editItem, addingToCat, setAddingToCat, itemForm, setItemForm,
-  startEditItem, cancelItem, saveItem, deleteItem,
+  startEditItem, cancelItem, resetItemForm, saveItem, deleteItem,
   itemSensors, handleItemDragEnd,
 }: {
   cat: Category; index: number; total: number; openCatId: string | null
@@ -109,7 +109,7 @@ function SortableCategory({
   addingToCat: string | null
   itemForm: { name: string; description: string; price: string; image_url: string }
   setItemForm: React.Dispatch<React.SetStateAction<{ name: string; description: string; price: string; image_url: string }>>
-  startEditItem: (item: MenuItem) => void; cancelItem: () => void
+  startEditItem: (item: MenuItem) => void; cancelItem: () => void; resetItemForm: () => void
   saveItem: (e: React.FormEvent) => void; deleteItem: (id: string, catId: string) => void
   itemSensors: ReturnType<typeof useSensors>
   handleItemDragEnd: (catId: string, event: DragEndEvent) => void
@@ -204,7 +204,7 @@ function SortableCategory({
             </form>
           ) : (
             <button
-              onClick={() => { setAddingToCat(cat.id); cancelItem() }}
+              onClick={() => { resetItemForm(); setAddingToCat(cat.id) }}
               className="text-sm text-green-600 hover:text-green-700 font-medium pt-1"
             >
               + Ürün Ekle
@@ -424,10 +424,14 @@ export default function AdminPage() {
     setItemForm({ name: item.name, description: item.description ?? '', price: item.price.toString(), image_url: item.image_url ?? '' })
   }
 
-  function cancelItem() {
-    setAddingToCat(null)
+  function resetItemForm() {
     setEditItem(null)
     setItemForm({ name: '', description: '', price: '', image_url: '' })
+  }
+
+  function cancelItem() {
+    setAddingToCat(null)
+    resetItemForm()
   }
 
   async function logout() {
@@ -503,6 +507,7 @@ export default function AdminPage() {
                 setItemForm={setItemForm}
                 startEditItem={startEditItem}
                 cancelItem={cancelItem}
+                resetItemForm={resetItemForm}
                 saveItem={saveItem}
                 deleteItem={deleteItem}
                 itemSensors={sensors}

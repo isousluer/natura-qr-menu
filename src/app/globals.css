@@ -1,1 +1,62 @@
 @import "tailwindcss";
+
+@theme {
+	--color-page: var(--bg-page);
+	--color-card: var(--bg-card);
+	--color-card-hover: var(--bg-card-hover);
+	--color-placeholder: var(--bg-placeholder);
+	--color-primary: var(--text-primary);
+	--color-secondary: var(--text-secondary);
+	--color-muted: var(--text-muted);
+	--color-price: var(--text-price);
+	--color-border-light: var(--border-light);
+	--color-border-card: var(--border-card);
+}
+
+/* Light theme (default) */
+:root,
+[data-theme="light"] {
+	--bg-page: #f9fafb;
+	--bg-card: #ffffff;
+	--bg-card-hover: #f3f4f6;
+	--bg-placeholder: #f3f4f6;
+	--text-primary: #1f2937;
+	--text-secondary: #6b7280;
+	--text-muted: #9ca3af;
+	--text-price: #16a34a;
+	--border-light: #f3f4f6;
+	--border-card: #f3f4f6;
+	--lightbox-bg: rgba(0, 0, 0, 0.8);
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+	--bg-page: #0f1117;
+	--bg-card: #1a1d27;
+	--bg-card-hover: #252830;
+	--bg-placeholder: #252830;
+	--text-primary: #f1f2f4;
+	--text-secondary: #a1a7b4;
+	--text-muted: #6b7280;
+	--text-price: #4ade80;
+	--border-light: #252830;
+	--border-card: #2a2d37;
+	--lightbox-bg: rgba(0, 0, 0, 0.9);
+}
+
+/* System preference fallback */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--bg-page: #0f1117;
+		--bg-card: #1a1d27;
+		--bg-card-hover: #252830;
+		--bg-placeholder: #252830;
+		--text-primary: #f1f2f4;
+		--text-secondary: #a1a7b4;
+		--text-muted: #6b7280;
+		--text-price: #4ade80;
+		--border-light: #252830;
+		--border-card: #2a2d37;
+		--lightbox-bg: rgba(0, 0, 0, 0.9);
+	}
+}

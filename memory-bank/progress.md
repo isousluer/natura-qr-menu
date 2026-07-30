@@ -30,9 +30,16 @@
 - [x] Eski görseller otomatik storage'dan siliniyor
 - [x] Vercel'e deploy edildi, env değişkenleri güncellendi
 - [x] revalidate = 30 saniye
+- [x] Görsel optimizasyonu (client-side WebP dönüşümü, max 1200px, max 300KB)
+- [x] Karanlık mod (sistem tercihine göre otomatik dark/light theme — public menü)
 
 ## Yapılacaklar
-- [ ] Görsel optimizasyonu (Supabase Transform — isteğe bağlı)
+- [ ] Arama / filtreleme (allerjen, vegan, glutensiz etiketleri)
+- [ ] QR kod oluşturucu (admin panelden masa numaralı QR üretip PDF indirme)
+- [ ] Günün önerisi / kampanya banner'ı
+- [ ] Stok durumu (tükenen ürünleri "Tükendi" olarak gösterme)
+- [ ] Analytics dashboard (hangi kategorilere/yemeklere en çok bakıldığı)
+- [ ] PWA desteği (ana ekrana ekleme, offline cached menü)
 
 ## Bilinen Sorunlar
 - Henüz yok

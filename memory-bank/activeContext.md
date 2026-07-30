@@ -7,7 +7,12 @@ Proje canlıda ve tam çalışır durumda. Tüm temel özellikler tamamlandı.
 Yeni özellik talepleri.
 
 ## Sonraki Adımlar
-- İsteğe bağlı: Supabase Transform ile görsel optimizasyonu
+- [ ] Arama / filtreleme
+- [ ] QR kod oluşturucu
+- [ ] Kampanya banner'ı
+- [ ] Stok durumu gösterimi
+- [ ] Analytics dashboard
+- [ ] PWA desteği
 
 ## Kesinleşen Kararlar
 - Next.js 16 + Turbopack (`next dev --turbo`)

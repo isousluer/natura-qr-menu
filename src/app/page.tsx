@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import type { CategoryWithItems } from '@/lib/types'
 import MenuAccordion from '@/components/MenuAccordion'
+import ThemeToggle from '@/components/ThemeToggle'
 
 export const revalidate = 30
 
@@ -14,7 +15,8 @@ export default async function MenuPage() {
   const data = (categories as CategoryWithItems[]) ?? []
 
   return (
-    <main className="max-w-2xl mx-auto px-4 py-8">
+    <main className="max-w-2xl mx-auto px-4 py-8 bg-page min-h-screen">
+      <ThemeToggle />
       <div className="text-center mb-6">
         <div className="inline-flex flex-col items-center">
           <div className="flex items-baseline gap-2 leading-none">
@@ -22,9 +24,10 @@ export default async function MenuPage() {
               <span className="text-xl font-semibold tracking-[0.15em]" style={{ color: '#7c5c3e', fontFamily: 'Georgia, serif' }}>BISTRO</span>
           </div>
           <div className="mt-1.5 h-px w-24 mx-auto" style={{ background: 'linear-gradient(to right, #3a7d44, #7c5c3e)' }} />
-          <span className="mt-1 text-xs tracking-[0.3em] uppercase text-gray-400">Menü</span>
+          <span className="mt-1 text-xs tracking-[0.3em] uppercase" style={{ color: 'var(--text-muted)' }}>Menü</span>
         </div>
-      </div>      <MenuAccordion categories={data} />
+      </div>
+      <MenuAccordion categories={data} />
     </main>
   )
 }

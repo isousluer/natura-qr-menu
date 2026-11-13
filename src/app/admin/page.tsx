@@ -35,6 +35,22 @@ function DragHandle(props: React.HTMLAttributes<HTMLSpanElement>) {
   )
 }
 
+function ActiveToggle({ active, onToggle }: { active: boolean; onToggle: () => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={active}
+      aria-label={active ? 'Pasife al' : 'Aktif et'}
+      title={active ? 'Pasife al' : 'Aktif et'}
+      onClick={onToggle}
+      className={`relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors ${active ? 'bg-green-500' : 'bg-gray-300'}`}
+    >
+      <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${active ? 'translate-x-4' : 'translate-x-0.5'}`} />
+    </button>
+  )
+}
+
 function ImageUpload({ label, onUpload, uploaded }: { label: string; onUpload: (url: string) => void; uploaded: boolean }) {
   const [loading, setLoading] = useState(false)
 
@@ -93,15 +109,16 @@ function ImageUpload({ label, onUpload, uploaded }: { label: string; onUpload: (
 }
 
 function SortableCategory({
-  cat, index, total, openCatId, setOpenCatId, editCat, startEditCat, deleteCategory,
+  cat, index, total, openCatId, setOpenCatId, editCat, startEditCat, deleteCategory, toggleCategory,
   catForm, setCatForm, saveCategory, cancelCatForm,
   items, editItem, addingToCat, setAddingToCat, itemForm, setItemForm,
-  startEditItem, cancelItem, resetItemForm, saveItem, deleteItem,
+  startEditItem, cancelItem, resetItemForm, saveItem, deleteItem, toggleItem,
   itemSensors, handleItemDragEnd,
 }: {
   cat: Category; index: number; total: number; openCatId: string | null
   setOpenCatId: (id: string | null) => void; editCat: Category | null
   startEditCat: (cat: Category) => void; deleteCategory: (id: string) => void
+  toggleCategory: (cat: Category) => void
   catForm: { name: string; image_url: string }
   setCatForm: React.Dispatch<React.SetStateAction<{ name: string; image_url: string }>>
   saveCategory: (e: React.FormEvent) => void; cancelCatForm: () => void
@@ -111,6 +128,7 @@ function SortableCategory({
   setItemForm: React.Dispatch<React.SetStateAction<{ name: string; description: string; price: string; image_url: string }>>
   startEditItem: (item: MenuItem) => void; cancelItem: () => void; resetItemForm: () => void
   saveItem: (e: React.FormEvent) => void; deleteItem: (id: string, catId: string) => void
+  toggleItem: (item: MenuItem) => void
   itemSensors: ReturnType<typeof useSensors>
   handleItemDragEnd: (catId: string, event: DragEndEvent) => void
   setAddingToCat: (id: string | null) => void
@@ -132,10 +150,11 @@ function SortableCategory({
           onClick={() => setOpenCatId(openCatId === cat.id ? null : cat.id)}
           className="font-semibold text-gray-800 text-left flex-1 flex items-center gap-2 mx-2"
         >
-          <span>{cat.name}</span>
-          {!cat.is_active && <span className="text-xs text-gray-400 font-normal">(pasif)</span>}
+          <span className={cat.is_active ? '' : 'text-gray-400 line-through'}>{cat.name}</span>
+          {!cat.is_active && <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 font-normal">Pasif</span>}
         </button>
         <div className="flex items-center gap-3">
+          <ActiveToggle active={cat.is_active} onToggle={() => toggleCategory(cat)} />
           <button onClick={() => startEditCat(cat)} className="text-sm text-blue-500 hover:text-blue-700">Düzenle</button>
           <button onClick={() => deleteCategory(cat.id)} className="text-sm text-red-400 hover:text-red-600">Sil</button>
           <button onClick={() => setOpenCatId(openCatId === cat.id ? null : cat.id)} className="text-gray-400 text-lg w-5 text-center">
@@ -185,6 +204,7 @@ function SortableCategory({
                   cancelItem={cancelItem}
                   saveItem={saveItem}
                   deleteItem={deleteItem}
+                  toggleItem={toggleItem}
                 />
               ))}
             </SortableContext>
@@ -218,13 +238,14 @@ function SortableCategory({
 
 function SortableItem({
   item, catId, editItem, itemForm, setItemForm,
-  startEditItem, cancelItem, saveItem, deleteItem,
+  startEditItem, cancelItem, saveItem, deleteItem, toggleItem,
 }: {
   item: MenuItem; catId: string; editItem: MenuItem | null
   itemForm: { name: string; description: string; price: string; image_url: string }
   setItemForm: React.Dispatch<React.SetStateAction<{ name: string; description: string; price: string; image_url: string }>>
   startEditItem: (item: MenuItem) => void; cancelItem: () => void
   saveItem: (e: React.FormEvent) => void; deleteItem: (id: string, catId: string) => void
+  toggleItem: (item: MenuItem) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: item.id })
@@ -239,18 +260,22 @@ function SortableItem({
     <div ref={setNodeRef} style={style}>
       <div className="flex justify-between items-center py-2.5 border-b border-gray-50">
         <DragHandle {...attributes} {...listeners} />
-        <div className="flex items-center gap-3 flex-1 mx-2">
+        <div className={`flex items-center gap-3 flex-1 mx-2 ${item.is_active ? '' : 'opacity-50'}`}>
           {item.image_url ? (
             <img src={item.image_url} alt={item.name} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
           ) : (
             <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-lg flex-shrink-0">🍽️</div>
           )}
           <div>
-            <p className="font-medium text-gray-800 text-sm">{item.name}</p>
+            <p className="font-medium text-gray-800 text-sm flex items-center gap-2">
+              <span className={item.is_active ? '' : 'line-through'}>{item.name}</span>
+              {!item.is_active && <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 font-normal">Pasif</span>}
+            </p>
             <p className="text-xs text-gray-400 mt-0.5">{item.price} ₺</p>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
+          <ActiveToggle active={item.is_active} onToggle={() => toggleItem(item)} />
           <button onClick={() => startEditItem(item)} className="text-sm text-blue-500 hover:text-blue-700">Düzenle</button>
           <button onClick={() => deleteItem(item.id, catId)} className="text-sm text-red-400 hover:text-red-600">Sil</button>
         </div>
@@ -385,6 +410,39 @@ export default function AdminPage() {
     loadCategories()
   }
 
+  async function toggleCategory(cat: Category) {
+    const updated = { ...cat, is_active: !cat.is_active }
+    setCategories((prev) => prev.map((c) => (c.id === cat.id ? updated : c)))
+    if (editCat?.id === cat.id) setEditCat(updated)
+    const res = await fetch(`/api/admin/categories/${cat.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated),
+    })
+    if (!res.ok) {
+      alert('Kategori durumu güncellenemedi.')
+      loadCategories()
+    }
+  }
+
+  async function toggleItem(item: MenuItem) {
+    const updated = { ...item, is_active: !item.is_active }
+    setItems((prev) => ({
+      ...prev,
+      [item.category_id]: (prev[item.category_id] ?? []).map((i) => (i.id === item.id ? updated : i)),
+    }))
+    if (editItem?.id === item.id) setEditItem(updated)
+    const res = await fetch(`/api/admin/menu-items/${item.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated),
+    })
+    if (!res.ok) {
+      alert('Ürün durumu güncellenemedi.')
+      loadItems(item.category_id)
+    }
+  }
+
   async function saveItem(e: React.FormEvent) {
     e.preventDefault()
     const payload = {
@@ -496,6 +554,7 @@ export default function AdminPage() {
                 editCat={editCat}
                 startEditCat={startEditCat}
                 deleteCategory={deleteCategory}
+                toggleCategory={toggleCategory}
                 catForm={catForm}
                 setCatForm={setCatForm}
                 saveCategory={saveCategory}
@@ -510,6 +569,7 @@ export default function AdminPage() {
                 resetItemForm={resetItemForm}
                 saveItem={saveItem}
                 deleteItem={deleteItem}
+                toggleItem={toggleItem}
                 itemSensors={sensors}
                 handleItemDragEnd={handleItemDragEnd}
                 setAddingToCat={setAddingToCat}
